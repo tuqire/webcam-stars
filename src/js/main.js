@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderer = new Renderer({ container })
     const scene = new Scene()
     const particles = new Particles({
+      scene,
       renderer,
-      numParticles: window.matchMedia('(max-width: 480px)').matches ? 4000 : 40000,
-      radius: 4,
+      numParticles: window.matchMedia('(max-width: 480px)').matches ? 4000 : 20000,
+      radius: 3,
       minSize: 0.015,
       maxSize: 0.03,
       sizeRange: 0.003,
@@ -33,15 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
       position: {
         x: 0,
         y: -0.001,
-        z: 4.5
+        z: 9.5
       }
     })
 
     const gui = new GUI({ particles }) // eslint-disable-line
-
-    const init = () => {
-      scene.add(particles.get())
-    }
 
     const animate = () => {
       requestAnimationFrame(animate) // eslint-disable-line
@@ -57,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
     }
 
-    init()
+    // init()
     animate()
   } else {
     const info = document.getElementById('info')

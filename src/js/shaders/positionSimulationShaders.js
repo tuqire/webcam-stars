@@ -50,8 +50,6 @@ const positionSimulationFragmentShader = `
 	}
 
 	void main() {
-		// vec3 defaultPos = texture2D(tDefaultPosition, vUv).xyz;
-		// vec3 prevPos = texture2D(tPrev, vUv).xyz;
 		vec3 position = texture2D(tDefaultPosition, vUv).xyz;
 		
 		// write new positions out

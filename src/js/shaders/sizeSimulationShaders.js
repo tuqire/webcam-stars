@@ -18,6 +18,7 @@ const sizeSimulationFragmentShader = `
 	uniform sampler2D tCurr;
 	uniform sampler2D tPosition;
 	uniform sampler2D tDefaultSize;
+	uniform sampler2D tWebcam;
 
 	uniform vec3 mouse;
 	uniform float sizeInc;
@@ -32,6 +33,7 @@ const sizeSimulationFragmentShader = `
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
+		vec3 webcamCross = texture2D(tWebcam, vec2(currPosition.x, currPosition.y) / 1.5).rgb;
 
 		if (size == 0.0) {
 			size = defaultSize;
@@ -56,7 +58,15 @@ const sizeSimulationFragmentShader = `
 
 	void main() {
 		// write new size out
-		gl_FragColor = vec4(0.0, 0.0, 0.0, getSize());
+		// gl_FragColor = vec4(0.0, 0.0, 0.0, getSize());
+
+		float size = 0.1;
+		
+		// if (webcamCross.r > 0.0 || webcamCross.g > 0.0 || webcamCross.b > 0.0) {
+		// 	size += sizeInc * 3.0;
+		// }
+
+		gl_FragColor = vec4(0.0, 0.0, 0.0, size);
 	}
 `
 
@@ -66,6 +76,7 @@ const sizeSimulationVertexShader = `
 
 	void main() {
 	  vUv = uv;
+
 		gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 	}
 `

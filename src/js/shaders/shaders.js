@@ -1,16 +1,16 @@
 /* eslint-disable */
 
 const fragmentShader = `
+	uniform sampler2D tDefaultPosition;
 	uniform sampler2D tPosition;
 	uniform sampler2D starImg;
-	uniform sampler2D tColour;
+	uniform sampler2D tWebcam;
 
 	varying vec2 vUv;
 
 	void main() {
-		vec3 goal = vec3((vUv - 0.5) * 4.0, 0);
-		vec3 position = texture2D(tPosition, vUv).xyz;
-		vec4 colour = texture2D(tColour, vUv).rgba;
+		vec3 position = texture2D(tDefaultPosition, vUv).xyz;
+		vec4 colour = texture2D(tWebcam, vec2((position.x + 3.) / 5.8, (position.y + 3.) / 5.8)).rgba;
 
 		gl_FragColor = colour;
 		gl_FragColor = gl_FragColor * texture2D(starImg, gl_PointCoord);
@@ -28,18 +28,13 @@ const vertexShader = `
 
 	void main() {
 		vUv = position.xy;
-		vec3 goal = vec3((vUv - 0.5) * 4.0, 0);
 
 		// position saved as rgba / xyzw value in a texture object in memory
-		vec3 defaultPosition = texture2D(tDefaultPosition, vUv).xyz;
-		vec3 position = texture2D(tPosition, vUv).xyz;
-		float distanceToTravel = length(goal - defaultPosition);
-		float distanceTravelled = length(position - defaultPosition);
-		float distanceTravelledRatio = distanceTravelled / distanceToTravel;
+		vec4 position = texture2D(tDefaultPosition, vUv).xyzw;
 
 		float size = texture2D(tSize, vUv).a;
 
-		vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+		vec4 mvPosition = modelViewMatrix * position;
 		gl_PointSize = size * (sizeMultiplierForScreen / -mvPosition.z);
 		gl_Position = projectionMatrix * mvPosition;
 	}
