@@ -30,19 +30,25 @@ const sizeSimulationFragmentShader = `
 
 	float getSize() {
 		vec3 currPosition = texture2D(tPosition, vUv).xyz;
+		vec4 webcamParticle = texture2D(tWebcam, vec2((currPosition.x + 3.) / 5.8, (currPosition.y + 3.) / 5.8)).rgba;
+
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
-		vec3 webcamCross = texture2D(tWebcam, vec2(currPosition.x, currPosition.y) / 1.5).rgb;
+		float sizeInc2 = sizeInc;
+		
+		if (webcamParticle.r > 0.3) {
+			sizeInc2 *= 800.0;
+		}
 
 		if (size == 0.0) {
 			size = defaultSize;
 		} else if (prevSize == 0.0 || size == prevSize) {
-			size = rand(vUv) >= 0.5 ? size + sizeInc : size - sizeInc;
+			size = rand(vUv) >= 0.5 ? size + sizeInc2 : size - sizeInc2;
 		} else if (size < (defaultSize - sizeRange)) {
-			size += sizeInc;
+			size += sizeInc2;
 		} else if (size > (defaultSize + sizeRange)) {
-			size -= sizeInc;
+			size -= sizeInc2;
 		} else {
 			size += size - prevSize;
 		}
@@ -57,16 +63,7 @@ const sizeSimulationFragmentShader = `
 	}
 
 	void main() {
-		// write new size out
-		// gl_FragColor = vec4(0.0, 0.0, 0.0, getSize());
-
-		float size = 0.1;
-		
-		// if (webcamCross.r > 0.0 || webcamCross.g > 0.0 || webcamCross.b > 0.0) {
-		// 	size += sizeInc * 3.0;
-		// }
-
-		gl_FragColor = vec4(0.0, 0.0, 0.0, size);
+		gl_FragColor = vec4(0.0, 0.0, 0.0, getSize());
 	}
 `
 

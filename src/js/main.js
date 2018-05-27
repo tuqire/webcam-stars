@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const particles = new Particles({
       scene,
       renderer,
-      numParticles: window.matchMedia('(max-width: 480px)').matches ? 4000 : 20000,
+      numParticles: window.matchMedia('(max-width: 480px)').matches ? 4000 : 100000,
       radius: 3,
       minSize: 0.015,
       maxSize: 0.03,
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       position: {
         x: 0,
         y: -0.001,
-        z: 9.5
+        z: 4.5
       }
     })
 

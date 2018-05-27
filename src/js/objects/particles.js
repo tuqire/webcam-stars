@@ -152,9 +152,9 @@ export default class Particles {
       tHeight,
       renderer: renderer.get(),
       uniforms: {
-        tPosition: { type: 't', value: this.positionFBO.targets[0] },
+        tPosition: { type: 't', value: this.positionFBO.simulationShader.uniforms.tDefaultPosition.value },
         tDefaultSize: { type: 't', value: 0 },
-        tWebcam: { type: 't', value: videoTexture },
+        tWebcam: { type: 't', value: videoDiffTexture },
 
         mouse: { value: new THREE.Vector3(10000, 10000, 10000) },
 
@@ -175,7 +175,7 @@ export default class Particles {
       tDefaultPosition: { type: 't', value: this.positionFBO.simulationShader.uniforms.tDefaultPosition.value },
       tPosition: { type: 't', value: this.positionFBO.targets[0] },
       tSize: { type: 't', value: this.sizeFBO.targets[0] },
-      tWebcam: { type: 't', value: videoTexture },
+      tWebcam: { type: 't', value: videoDiffTexture },
 
       tColour: { type: 't', value: this.getColours() }
     })
