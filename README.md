@@ -17,3 +17,10 @@ Then visit [http://localhost:8089](http://localhost:8089)
 ## Contributers
 
 * Tuqire Hussain <me@tuqire.com>
+
+## TODO
+
+delete position simulation shaders
+remove unneeded textures
+give stars 0 z value
+adjust image diff map

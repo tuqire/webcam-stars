@@ -1,7 +1,6 @@
 import FBO from 'three.js-fbo'
 import { createDataTexture } from '../utils'
-import { positionSimulationVertexShader, positionSimulationFragmentShader } from '../shaders/positionSimulationShaders'
-import { sizeSimulationVertexShader, sizeSimulationFragmentShader } from '../shaders/sizeSimulationShaders'
+import { sizeSimulationVertexShader, sizeSimulationFragmentShader } from '../shaders/size-simulation-shaders'
 import { vertexShader, fragmentShader } from '../shaders/shaders'
 
 export default class Particles {
@@ -112,24 +111,6 @@ export default class Particles {
     const tWidth = this.tWidth = tHeight
     this.numParticles = tWidth * tHeight
 
-    this.positions = new Float32Array(this.numParticles * 3)
-
-    this.positionFBO = new FBO({
-      tWidth,
-      tHeight,
-      renderer: renderer.get(),
-      uniforms: {
-        tDefaultPosition: { type: 't', value: 0 }, // default star positions
-
-        topSpeed: { type: 'f', value: this.topSpeed }, // the top speed of stars
-        acceleration: { type: 'f', value: this.acceleration } // the star particle acceleration
-      },
-      simulationVertexShader: positionSimulationVertexShader,
-      simulationFragmentShader: positionSimulationFragmentShader
-    })
-
-    this.positionFBO.setTextureUniform('tDefaultPosition', this.getPositions())
-
     const videoImage = this.videoImage = document.createElement('canvas')
     this.videoImageContext = videoImage.getContext('2d')
 
@@ -147,12 +128,14 @@ export default class Particles {
     document.querySelector('body').appendChild(videoImage)
     document.querySelector('body').appendChild(videoDiffImage)
 
+    this.positions = new Float32Array(this.numParticles * 3)
+
     this.sizeFBO = new FBO({
       tWidth,
       tHeight,
       renderer: renderer.get(),
       uniforms: {
-        tPosition: { type: 't', value: this.positionFBO.simulationShader.uniforms.tDefaultPosition.value },
+        tPosition: { type: 't', value: 0 },
         tDefaultSize: { type: 't', value: 0 },
         tWebcam: { type: 't', value: videoDiffTexture },
 
@@ -169,11 +152,11 @@ export default class Particles {
       simulationFragmentShader: sizeSimulationFragmentShader
     })
 
+    this.sizeFBO.setTextureUniform('tPosition', this.getPositions())
     this.sizeFBO.setTextureUniform('tDefaultSize', this.getSizes())
 
     const uniforms = Object.assign({}, configUniforms, {
-      tDefaultPosition: { type: 't', value: this.positionFBO.simulationShader.uniforms.tDefaultPosition.value },
-      tPosition: { type: 't', value: this.positionFBO.targets[0] },
+      tPosition: { type: 't', value: this.sizeFBO.simulationShader.uniforms.tPosition.value },
       tSize: { type: 't', value: this.sizeFBO.targets[0] },
       tWebcam: { type: 't', value: videoDiffTexture },
 
@@ -317,8 +300,8 @@ export default class Particles {
       data: colours,
       tWidth: this.tWidth,
       tHeight: this.tHeight,
-      format: this.positionFBO.format,
-      filterType: this.positionFBO.filterType
+      format: this.sizeFBO.format,
+      filterType: this.sizeFBO.filterType
     })
   }
 
@@ -405,9 +388,7 @@ export default class Particles {
         videoDiffTexture.needsUpdate = true
       }
 
-      this.positionFBO.simulate()
       this.sizeFBO.simulate()
-      this.sizeFBO.simulationShader.uniforms.tPosition.value = this.material.uniforms.tPosition.value = this.positionFBO.getCurrentFrame()
       this.material.uniforms.tSize.value = this.sizeFBO.getCurrentFrame()
     }
   }
@@ -431,9 +412,6 @@ export default class Particles {
   }
 
   updateParticleVars () {
-    this.positionFBO.simulationShader.uniforms.topSpeed.value = this.topSpeed
-    this.positionFBO.simulationShader.uniforms.acceleration.value = this.acceleration
-
     this.sizeFBO.simulationShader.uniforms.hoverDist.value = this.hoverDist
     this.sizeFBO.simulationShader.uniforms.hoverSizeInc.value = this.hoverSizeInc
     this.sizeFBO.simulationShader.uniforms.hoverMaxSizeMultiplier.value = this.hoverMaxSizeMultiplier

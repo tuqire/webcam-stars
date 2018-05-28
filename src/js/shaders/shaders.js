@@ -1,15 +1,14 @@
 /* eslint-disable */
 
 const fragmentShader = `
-	uniform sampler2D tDefaultPosition;
 	uniform sampler2D tPosition;
-	uniform sampler2D starImg;
 	uniform sampler2D tColour;
+	uniform sampler2D starImg;
 
 	varying vec2 vUv;
 
 	void main() {
-		vec3 position = texture2D(tDefaultPosition, vUv).xyz;
+		vec3 position = texture2D(tPosition, vUv).xyz;
 		vec4 colour = texture2D(tColour, vUv).rgba;
 
 		gl_FragColor = colour;
@@ -18,7 +17,6 @@ const fragmentShader = `
 `
 
 const vertexShader = `
-	uniform sampler2D tDefaultPosition;
 	uniform sampler2D tPosition;
 	uniform sampler2D tSize;
 
@@ -30,8 +28,7 @@ const vertexShader = `
 		vUv = position.xy;
 
 		// position saved as rgba / xyzw value in a texture object in memory
-		vec4 position = texture2D(tDefaultPosition, vUv).xyzw;
-
+		vec4 position = texture2D(tPosition, vUv).xyzw;
 		float size = texture2D(tSize, vUv).w;
 
 		vec4 mvPosition = modelViewMatrix * position;
