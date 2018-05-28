@@ -20,7 +20,8 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-delete position simulation shaders
-remove unneeded textures
-give stars 0 z value
 adjust image diff map
+remove excess params in size simulation shader
+add low and high val to particles and uniforms
+move image map to shader
+figure out what fourth var in position does

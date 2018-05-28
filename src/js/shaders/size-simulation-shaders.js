@@ -36,21 +36,23 @@ const sizeSimulationFragmentShader = `
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
 		float sizeInc2 = sizeInc;
-		
-		if (webcamParticle.r > 0.3) {
-			sizeInc2 *= 800.0;
+		float sizeRange2 = sizeRange;
+
+		if (webcamParticle.r > 0.5) {
+			sizeInc2 *= 20.0;
+			sizeRange2 *= 20.0;
 		}
 
 		if (size == 0.0) {
 			size = defaultSize;
 		} else if (prevSize == 0.0 || size == prevSize) {
 			size = rand(vUv) >= 0.5 ? size + sizeInc2 : size - sizeInc2;
-		} else if (size < (defaultSize - sizeRange)) {
+		} else if (size < (defaultSize - sizeRange2)) {
 			size += sizeInc2;
-		} else if (size > (defaultSize + sizeRange)) {
+		} else if (size > (defaultSize + sizeRange2)) {
 			size -= sizeInc2;
 		} else {
-			size += size - prevSize;
+			size += sizeInc2;
 		}
 
 		float dist = length(currPosition.xy - mouse.xy);

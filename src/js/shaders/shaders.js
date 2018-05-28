@@ -1,14 +1,12 @@
 /* eslint-disable */
 
 const fragmentShader = `
-	uniform sampler2D tPosition;
 	uniform sampler2D tColour;
 	uniform sampler2D starImg;
 
 	varying vec2 vUv;
 
 	void main() {
-		vec3 position = texture2D(tPosition, vUv).xyz;
 		vec4 colour = texture2D(tColour, vUv).rgba;
 
 		gl_FragColor = colour;

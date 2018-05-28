@@ -244,7 +244,7 @@ export default class Particles {
       lowestX = lowestX > this.positions[i3] ? this.positions[i3] : lowestX
       lowestY = lowestY > this.positions[i3] ? this.positions[i3] : lowestY
 
-      vertices[i4 + 3] = 1.0 // stores whether particle is representing text or not
+      vertices[i4 + 3] = 1.0
     }
     console.log({
       maxX: largestX,
@@ -377,9 +377,9 @@ export default class Particles {
             imgPixels.data[i + 1] -= average
             imgPixels.data[i + 2] -= average
 
-            imgPixels.data[i] *= 20
-            imgPixels.data[i + 1] *= 20
-            imgPixels.data[i + 2] *= 20
+            imgPixels.data[i] *= 50
+            imgPixels.data[i + 1] *= 50
+            imgPixels.data[i + 2] *= 50
           }
         }
 
