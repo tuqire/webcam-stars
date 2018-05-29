@@ -32,11 +32,6 @@ export default class Particles {
     sizeInc = 0.01, // the amount the size is increased / decreased per frame
     skew = 1,
 
-    // used to define raycasting boundries
-    hoverDist = 10,
-    hoverSizeInc = 0.05,
-    hoverMaxSizeMultiplier = 5,
-
     // particle colours
     brightness = 1,
     opacity = 1
@@ -55,11 +50,6 @@ export default class Particles {
     this.sizeRange = sizeRange
     this.sizeInc = sizeInc
     this.skew = skew // skews the median size
-
-    // used to define mouse interaction animation
-    this.hoverDist = hoverDist
-    this.hoverSizeInc = hoverSizeInc
-    this.hoverMaxSizeMultiplier = hoverMaxSizeMultiplier
 
     // use to define particle colours
     this.brightness = brightness
@@ -139,8 +129,6 @@ export default class Particles {
         tDefaultSize: { type: 't', value: 0 },
         tWebcam: { type: 't', value: videoDiffTexture },
 
-        mouse: { value: new THREE.Vector3(10000, 10000, 10000) },
-
         sizeRange: { type: 'f', value: this.sizeRange },
         sizeInc: { type: 'f', value: this.sizeInc },
 
@@ -169,9 +157,8 @@ export default class Particles {
       fragmentShader,
       depthTest,
       depthWrite,
-      opacity: 1,
-      vertexColors: true,
-      transparent: true
+      opacity: this.opacity,
+      transparent
     })
 
     // set uv coords of particles in texture as positions
@@ -377,9 +364,9 @@ export default class Particles {
             imgPixels.data[i + 1] -= average
             imgPixels.data[i + 2] -= average
 
-            imgPixels.data[i] *= 50
-            imgPixels.data[i + 1] *= 50
-            imgPixels.data[i + 2] *= 50
+            imgPixels.data[i] *= 40
+            imgPixels.data[i + 1] *= 40
+            imgPixels.data[i + 2] *= 40
           }
         }
 

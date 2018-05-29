@@ -21,11 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
       sizeRange: 0.003,
       sizeInc: 0.00005,
       skew: 35,
-      hoverDist: 0.04,
-      hoverSizeInc: 0.002,
-      hoverMaxSizeMultiplier: 1.7,
-      topSpeed: 1,
-      acceleration: 0.0001,
       brightness: 0.9,
       opacity: 1
     })

@@ -20,13 +20,8 @@ const sizeSimulationFragmentShader = `
 	uniform sampler2D tDefaultSize;
 	uniform sampler2D tWebcam;
 
-	uniform vec3 mouse;
 	uniform float sizeInc;
 	uniform float sizeRange;
-
-	uniform float hoverDist;
-	uniform float hoverSizeInc;
-	uniform float hoverMaxSizeMultiplier;
 
 	float getSize() {
 		vec3 currPosition = texture2D(tPosition, vUv).xyz;
@@ -38,27 +33,24 @@ const sizeSimulationFragmentShader = `
 		float sizeInc2 = sizeInc;
 		float sizeRange2 = sizeRange;
 
-		if (webcamParticle.r > 0.5) {
-			sizeInc2 *= 20.0;
-			sizeRange2 *= 20.0;
+		if (webcamParticle.r > 0.7) {
+			sizeInc2 *= 50.0;
+			sizeRange2 *= 50.0;
 		}
+
+		float minSize = defaultSize - sizeRange2;
+		float maxSize = defaultSize + sizeRange2;
 
 		if (size == 0.0) {
 			size = defaultSize;
 		} else if (prevSize == 0.0 || size == prevSize) {
 			size = rand(vUv) >= 0.5 ? size + sizeInc2 : size - sizeInc2;
-		} else if (size < (defaultSize - sizeRange2)) {
+		} else if (size < minSize) {
 			size += sizeInc2;
-		} else if (size > (defaultSize + sizeRange2)) {
+		} else if (size > maxSize) {
 			size -= sizeInc2;
 		} else {
-			size += sizeInc2;
-		}
-
-		float dist = length(currPosition.xy - mouse.xy);
-
-		if (dist < hoverDist && size < (defaultSize * hoverMaxSizeMultiplier)) {
-			size += hoverSizeInc;
+			size += prevSize < size ? sizeInc2 : -sizeInc2;
 		}
 
 		return size;
