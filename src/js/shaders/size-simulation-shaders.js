@@ -24,33 +24,38 @@ const sizeSimulationFragmentShader = `
 	uniform float sizeRange;
 
 	float getSize() {
+		// vec4 currPosition = vec4((vUv.x * 1.0), (vUv.y * 1.0), 0.0, 1.0);
+		// vec4 webcamParticle = texture2D(tWebcam, vec2(currPosition.x, currPosition.y)).rgba;
 		vec3 currPosition = texture2D(tPosition, vUv).xyz;
-		vec4 webcamParticle = texture2D(tWebcam, vec2((currPosition.x + 3.) / 5.8, (currPosition.y + 3.) / 5.8)).rgba;
-
+		vec4 webcamParticle = texture2D(tWebcam, vec2((currPosition.x + 3.0) / 5.8, (currPosition.y + 3.0) / 5.8)).rgba;
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
-		float sizeInc2 = sizeInc;
-		float sizeRange2 = sizeRange;
+		// float sizeInc2 = sizeInc;
+		// float sizeRange2 = sizeRange;
 
-		if (webcamParticle.r > 0.7) {
-			sizeInc2 *= 50.0;
-			sizeRange2 *= 50.0;
-		}
+		// if (webcamParticle.r > 0.7) {
+			// sizeInc2 *= webcamParticle.r * 5.0;
+			// sizeRange2 *= webcamParticle.r * 5.0;
+		// }
 
-		float minSize = defaultSize - sizeRange2;
-		float maxSize = defaultSize + sizeRange2;
+		// float minSize = defaultSize - sizeRange;
+		// float maxSize = defaultSize + sizeRange2;
 
 		if (size == 0.0) {
 			size = defaultSize;
 		} else if (prevSize == 0.0 || size == prevSize) {
-			size = rand(vUv) >= 0.5 ? size + sizeInc2 : size - sizeInc2;
-		} else if (size < minSize) {
-			size += sizeInc2;
-		} else if (size > maxSize) {
-			size -= sizeInc2;
+			size = rand(vUv) >= 0.5 ? size + sizeInc : size - sizeInc;
+		} else if (size < (defaultSize - sizeRange)) {
+			size += sizeInc;
+		} else if (size > (defaultSize + sizeRange)) {
+			size -= sizeInc;
 		} else {
-			size += prevSize < size ? sizeInc2 : -sizeInc2;
+			size += size - prevSize;
+		}
+
+		if (webcamParticle.r > 0.5) {
+			size += webcamParticle.r / 2000.0;
 		}
 
 		return size;
