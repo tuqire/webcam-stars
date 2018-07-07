@@ -32,8 +32,8 @@ const sizeSimulationFragmentShader = `
 		float _defaultSize = defaultSize;
 
 		if (isWebcamParticle) {
-			_defaultSize += webcamParticleVal * 0.025;
-			_sizeInc += webcamParticleVal * 0.001;
+			_defaultSize += webcamParticleVal * 0.015;
+			_sizeInc += webcamParticleVal * 0.0001;
 		}
 
 		float minSize = _defaultSize - sizeRange;
@@ -46,7 +46,7 @@ const sizeSimulationFragmentShader = `
 		} else if (size < minSize) {
 			size += _sizeInc;
 		} else if (size > maxSize) {
-			size = wasWebcamParticle ? size - (_sizeInc * 3.5) : size - _sizeInc;
+			size = wasWebcamParticle ? size - (_sizeInc * 5.5) : size - _sizeInc;
 		} else {
 			size += size - prevSize > 0.0 ? _sizeInc : -_sizeInc;
 		}

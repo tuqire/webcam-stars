@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       position: {
         x: 0,
         y: 0.001,
-        z: -3.5
+        z: -3.9
       }
     })
     // const gui = new GUI({ particles }) // eslint-disable-line

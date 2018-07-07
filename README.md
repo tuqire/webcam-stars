@@ -20,8 +20,6 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-move image map to shader
-make positions square not circle
 get webcam star position computed (check webcam particles)
 compute webcam sizes
 see if can use ull vales in shaders reducing shader size and memory requirements

@@ -74,6 +74,9 @@ export default class Particles {
         video.height = 480
         video.autoplay = true
 
+        this.windowHeight = window.innerHeight
+        this.windowWidth = window.innerWidth
+
         this.addStars({
           scene,
           renderer,
@@ -237,10 +240,10 @@ export default class Particles {
 
   getPositions () {
     const vertices = new Float32Array(this.numParticles * 4)
-    let largestX = 0
-    let largestY = 0
     let lowestX = 0
     let lowestY = 0
+    let largestX = 0
+    let largestY = 0
 
     for (let i = 0, i3 = 0, i4 = 0; i < this.numParticles; i++, i3 += 3, i4 += 4) {
       const vertice = this.calcPosition()
@@ -249,35 +252,29 @@ export default class Particles {
       this.positions[i3 + 1] = vertices[i4 + 1] = vertice[1]
       this.positions[i3 + 2] = vertices[i4 + 2] = vertice[2]
 
-      largestX = largestX < this.positions[i3] ? this.positions[i3] : largestX
-      largestY = largestY < this.positions[i3] ? this.positions[i3] : largestY
-
       lowestX = lowestX > this.positions[i3] ? this.positions[i3] : lowestX
       lowestY = lowestY > this.positions[i3] ? this.positions[i3] : lowestY
 
+      largestX = largestX < this.positions[i3] ? this.positions[i3] : largestX
+      largestY = largestY < this.positions[i3] ? this.positions[i3] : largestY
+
       vertices[i4 + 3] = 1.0
     }
-    console.log({
-      maxX: largestX,
-      maxY: largestY,
-      minX: lowestX,
-      minY: lowestY
-    })
+
+    this.lowestX = lowestX
+    this.lowestY = lowestY
+    this.largestX = largestX
+    this.largestY = largestY
+
     return vertices
   }
 
   calcPosition () {
-    const radius = this.radius
-    const x = Math.random() - 0.5
-    const y = Math.random() - 0.5
+    const x = (Math.random() - 0.5) * (this.windowWidth / 290)
+    const y = (Math.random() - 0.5) * (this.windowHeight / 290)
     const z = 0
-    const d = Math.pow(Math.random(), 0.6) * radius * (1 / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)))
 
-    return [
-      x * d,
-      y * d,
-      z
-    ]
+    return [x, y, z]
   }
 
   getSizes () {
@@ -355,18 +352,10 @@ export default class Particles {
 
   update () {
     if (this.ready) {
-      // update video texture with webcam difference feed
-      const { video, videoImageContext, videoDiffImageContext, videoImage: { width: videoWidth, height: videoHeight }, videoTexture, videoDiffTexture } = this
+      const { video, videoImageContext, videoImage: { width: videoWidth, height: videoHeight }, videoTexture } = this
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         videoImageContext.drawImage(video, 0, 0, videoWidth, videoHeight)
-
         videoTexture.needsUpdate = true
-
-        const imgPixels = videoImageContext.getImageData(0, 0, videoWidth, videoHeight)
-
-        videoDiffImageContext.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height)
-
-        videoDiffTexture.needsUpdate = true
       }
 
       this.blackAndWhiteFBO.simulate()
