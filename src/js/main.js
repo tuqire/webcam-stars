@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       maxSize: 0.03,
       sizeRange: 0.003,
       sizeInc: 0.00005,
-      skew: 35,
+      skew: 75,
       brightness: 0.9,
       opacity: 1
     })
