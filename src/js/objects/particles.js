@@ -1,6 +1,8 @@
 import FBO from 'three.js-fbo'
 import { createDataTexture } from '../utils'
 import { sizeSimulationVertexShader, sizeSimulationFragmentShader } from '../shaders/size-simulation-shaders'
+import { blackAndWhiteSimulationVertexShader, blackAndWhiteSimulationFragmentShader } from '../shaders/black-and-white-webcam'
+import { differenceSimulationVertexShader, differenceSimulationFragmentShader } from '../shaders/difference-webcam'
 import { vertexShader, fragmentShader } from '../shaders/shaders'
 
 export default class Particles {
@@ -116,10 +118,31 @@ export default class Particles {
     videoDiffTexture.minFilter = videoDiffTexture.magFilter = THREE.NearestFilter
     videoDiffTexture.needsUpdate = true
 
-    document.querySelector('body').appendChild(videoImage)
-    document.querySelector('body').appendChild(videoDiffImage)
-
     this.positions = new Float32Array(this.numParticles * 3)
+
+    this.blackAndWhiteFBO = new FBO({
+      tWidth: this.videoImage.width,
+      tHeight: this.videoImage.height,
+      renderer: renderer.get(),
+      uniforms: {
+        tWebcam: { type: 't', value: videoTexture }
+      },
+      simulationVertexShader: blackAndWhiteSimulationVertexShader,
+      simulationFragmentShader: blackAndWhiteSimulationFragmentShader
+    })
+
+    this.webcamDifferenceFBO = new FBO({
+      tWidth: this.videoImage.width,
+      tHeight: this.videoImage.height,
+      renderer: renderer.get(),
+      uniforms: {
+        tWebcam: { type: 't', value: 0 }
+      },
+      simulationVertexShader: differenceSimulationVertexShader,
+      simulationFragmentShader: differenceSimulationFragmentShader
+    })
+
+    this.webcamDifferenceFBO.setTextureUniform('tWebcam', this.blackAndWhiteFBO.getCurrentFrame())
 
     this.sizeFBO = new FBO({
       tWidth,
@@ -128,7 +151,7 @@ export default class Particles {
       uniforms: {
         tPosition: { type: 't', value: 0 },
         tDefaultSize: { type: 't', value: 0 },
-        tWebcam: { type: 't', value: videoDiffTexture },
+        tWebcam: { type: 't', value: 0 },
 
         sizeRange: { type: 'f', value: this.sizeRange },
         sizeInc: { type: 'f', value: this.sizeInc },
@@ -147,7 +170,7 @@ export default class Particles {
     const uniforms = Object.assign({}, configUniforms, {
       tPosition: { type: 't', value: this.sizeFBO.simulationShader.uniforms.tPosition.value },
       tSize: { type: 't', value: this.sizeFBO.targets[0] },
-      tWebcam: { type: 't', value: videoDiffTexture },
+      tWebcam: { type: 't', value: 0 },
 
       tColour: { type: 't', value: this.getColours() }
     })
@@ -341,41 +364,16 @@ export default class Particles {
 
         const imgPixels = videoImageContext.getImageData(0, 0, videoWidth, videoHeight)
 
-        for (let y = 0; y < imgPixels.height; y++) {
-          for (let x = 0; x < imgPixels.width; x++) {
-            const i = (y * 4) * imgPixels.width + x * 4
-            const avg = (imgPixels.data[i] + imgPixels.data[i + 1] + imgPixels.data[i + 2]) / 3
-
-            imgPixels.data[i] = avg
-            imgPixels.data[i + 1] = avg
-            imgPixels.data[i + 2] = avg
-          }
-        }
-
-        for (let y = 0; y < imgPixels.height; y += 1) {
-          for (let x = 0; x < imgPixels.width; x += 1) {
-            const i = (y * 4) * imgPixels.width + x * 4
-
-            const average = (imgPixels.data[i - 3] + imgPixels.data[i + 5] +
-              imgPixels.data[i - (imgPixels.width * 4) + 1] + imgPixels.data[i + (imgPixels.width * 4) + 1] +
-              imgPixels.data[i - (imgPixels.width * 4) - 3] + imgPixels.data[i + (imgPixels.width * 4) - 3] +
-              imgPixels.data[i - (imgPixels.width * 4) + 5] + imgPixels.data[i + (imgPixels.width * 4) + 5]) / 4
-
-            imgPixels.data[i] -= average
-            imgPixels.data[i + 1] -= average
-            imgPixels.data[i + 2] -= average
-
-            imgPixels.data[i] *= 40
-            imgPixels.data[i + 1] *= 40
-            imgPixels.data[i + 2] *= 40
-          }
-        }
-
         videoDiffImageContext.putImageData(imgPixels, 0, 0, 0, 0, imgPixels.width, imgPixels.height)
 
         videoDiffTexture.needsUpdate = true
       }
 
+      this.blackAndWhiteFBO.simulate()
+      this.webcamDifferenceFBO.simulationShader.uniforms.tWebcam.value = this.blackAndWhiteFBO.getCurrentFrame()
+      this.webcamDifferenceFBO.simulate()
+      this.sizeFBO.simulationShader.uniforms.tWebcam.value = this.webcamDifferenceFBO.getCurrentFrame()
+      this.material.uniforms.tWebcam.value = this.webcamDifferenceFBO.getCurrentFrame()
       this.sizeFBO.simulate()
       this.material.uniforms.tSize.value = this.sizeFBO.getCurrentFrame()
     }
