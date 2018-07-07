@@ -1,5 +1,5 @@
 import isWebglEnabled from 'detector-webgl'
-
+import Stats from 'stats.js'
 import Camera from './io/camera'
 import GUI from './io/gui'
 import Renderer from './io/renderer'
@@ -32,8 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
         z: -3.5
       }
     })
+    // const gui = new GUI({ particles }) // eslint-disable-line
+    const fpsStats = new Stats()
 
-    const gui = new GUI({ particles }) // eslint-disable-line
+    const init = () => {
+      fpsStats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.body.appendChild(fpsStats.dom)
+    }
 
     const animate = () => {
       requestAnimationFrame(animate) // eslint-disable-line
@@ -41,15 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const render = () => {
+      fpsStats.begin()
+
       particles.update()
 
       renderer.render({
         scene: scene.get(),
         camera: camera.get()
       })
+
+      fpsStats.end()
     }
 
-    // init()
+    init()
     animate()
   } else {
     const info = document.getElementById('info')
