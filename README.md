@@ -20,8 +20,12 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-adjust image diff map
-remove excess params in size simulation shader
-add low and high val to particles and uniforms
 move image map to shader
-figure out what fourth var in position does
+make positions square not circle
+get webcam star position computed (check webcam particles)
+compute webcam sizes
+see if can use ull vales in shaders reducing shader size and memory requirements
+make stars look more like stars
+add controls
+refactor paticles class
+NIT: figure out what fourth var in position does
