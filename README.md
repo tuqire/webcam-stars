@@ -8,7 +8,7 @@ This project allows the user to control stars using their webcam feed. Built usi
 yarn start
 ```
 
-Then visit [http://localhost:8089](http://localhost:8089)
+Then visit [http://localhost:8090](http://localhost:8090)
 
 ## Working Demo
 
