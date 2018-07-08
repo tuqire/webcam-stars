@@ -20,4 +20,4 @@ Then visit [http://localhost:8090](http://localhost:8090)
 
 ## TODO
 
-refactor particles class
+1. refactor particles class
