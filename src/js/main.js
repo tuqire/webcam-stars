@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
         z: -3.9
       }
     })
-    const fpsStats = new Stats()
+    const stats = new Stats()
 
     const init = () => {
       new Controls({ particles }) // eslint-disable-line
 
-      fpsStats.showPanel(0)
-      document.body.appendChild(fpsStats.dom)
+      stats.showPanel(0)
+      document.body.appendChild(stats.dom)
     }
 
     const animate = () => {
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const render = () => {
-      fpsStats.begin()
+      stats.begin()
 
       particles.update()
 
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         camera: camera.get()
       })
 
-      fpsStats.end()
+      stats.end()
     }
 
     init()
