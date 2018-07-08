@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       numParticles: window.matchMedia('(max-width: 480px)').matches ? 4000 : 100000,
       radius: 3,
       minSize: 0.015,
-      maxSize: 0.03,
+      maxSize: 0.04,
       sizeRange: 0.003,
       sizeInc: 0.00005,
       skew: 75,
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fpsStats = new Stats()
 
     const init = () => {
-      fpsStats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+      fpsStats.showPanel(0)
       document.body.appendChild(fpsStats.dom)
     }
 
