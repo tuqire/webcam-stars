@@ -20,7 +20,6 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-fix URL.createObjectURL
 rename webcamHeight and webcamWidth in shader
 consistent naming for video and webcam
 refactor particles class
