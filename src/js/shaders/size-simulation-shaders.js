@@ -20,6 +20,12 @@ const sizeSimulationFragmentShader = `
 	uniform sampler2D tDefaultSize;
 	uniform sampler2D tWebcam;
 
+	uniform float webcamThreshold;
+	uniform float webcamStarInc;
+	uniform float webcamStarSize;
+	uniform float webcamStarMultiplier;
+	uniform float webcamStarDecSpeed;
+
 	uniform float sizeInc;
 	uniform float sizeRange;
 	uniform float radius;
@@ -28,13 +34,13 @@ const sizeSimulationFragmentShader = `
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
-		bool wasWebcamParticle = texture2D(tCurr, vUv).z > 0.2 && !isWebcamParticle;
+		bool wasWebcamParticle = texture2D(tCurr, vUv).z > webcamThreshold && !isWebcamParticle;
 		float _sizeInc = sizeInc;
 		float _defaultSize = defaultSize;
 
 		if (isWebcamParticle) {
-			_defaultSize += 0.003 + (webcamParticleVal * 5000.0) * (_defaultSize / 2.0) * _defaultSize * _defaultSize;
-			_sizeInc += webcamParticleVal * 0.0001;
+			_defaultSize += webcamStarSize + (webcamParticleVal * webcamStarMultiplier) * (_defaultSize / 2.0) * _defaultSize * _defaultSize;
+			_sizeInc += webcamParticleVal * webcamStarInc;
 		}
 
 		float minSize = _defaultSize - sizeRange;
@@ -47,7 +53,7 @@ const sizeSimulationFragmentShader = `
 		} else if (size < minSize) {
 			size += _sizeInc;
 		} else if (size > maxSize) {
-			size = wasWebcamParticle ? size - (_sizeInc * 5.5) : size - _sizeInc;
+			size = wasWebcamParticle ? size - (_sizeInc * webcamStarDecSpeed) : size - _sizeInc;
 		} else {
 			size += size - prevSize > 0.0 ? _sizeInc : -_sizeInc;
 		}
@@ -58,7 +64,7 @@ const sizeSimulationFragmentShader = `
 	void main() {
 		vec3 currPosition = texture2D(tPosition, vUv).xyz;
 		float webcamParticleVal = texture2D(tWebcam, vec2((currPosition.x + (radius / 2.0)) / radius, (currPosition.y + (radius / 2.0)) / radius)).r;
-		bool isWebcamParticle = webcamParticleVal > 0.2;
+		bool isWebcamParticle = webcamParticleVal > webcamThreshold;
 
 		gl_FragColor = vec4(0.0, 0.0, isWebcamParticle ? 1.0: 0.0, getSize(isWebcamParticle, webcamParticleVal));
 	}

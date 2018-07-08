@@ -20,11 +20,7 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-make stars look more like stars
-add controls
 fix URL.createObjectURL
 rename webcamHeight and webcamWidth in shader
 consistent naming for video and webcam
-refactor paticles class
-see if can use null vales in shaders reducing shader size and memory requirements
-NIT: figure out what fourth var in position does
+refactor particles class

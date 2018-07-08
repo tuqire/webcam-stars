@@ -36,7 +36,15 @@ export default class Particles {
 
     // particle colours
     brightness = 1,
-    opacity = 1
+    opacity = 1,
+
+    // webcam particle values
+    webcamOutlineStrength = 50,
+    webcamThreshold = 0.5,
+    webcamStarInc = 0.0001,
+    webcamStarSize = 0.3,
+    webcamStarMultiplier = 5000,
+    webcamStarDecSpeed = 5
   }) {
     this.renderer = renderer
 
@@ -56,6 +64,14 @@ export default class Particles {
     // use to define particle colours
     this.brightness = brightness
     this.opacity = opacity
+
+    // webcm particle controls
+    this.webcamOutlineStrength = webcamOutlineStrength
+    this.webcamThreshold = webcamThreshold
+    this.webcamStarInc = webcamStarInc
+    this.webcamStarSize = webcamStarSize
+    this.webcamStarMultiplier = webcamStarMultiplier
+    this.webcamStarDecSpeed = webcamStarDecSpeed
 
     this.video = document.createElement('video')
     this.webcamWidth = 1280
@@ -139,7 +155,8 @@ export default class Particles {
       uniforms: {
         webcamWidth: { type: 'f', value: this.videoImage.width },
         webcamHeight: { type: 'f', value: this.videoImage.height },
-        tWebcam: { type: 't', value: 0 }
+        tWebcam: { type: 't', value: 0 },
+        webcamOutlineStrength: { type: 'f', value: this.webcamOutlineStrength }
       },
       simulationVertexShader: differenceSimulationVertexShader,
       simulationFragmentShader: differenceSimulationFragmentShader
@@ -166,7 +183,13 @@ export default class Particles {
 
         hoverDist: { type: 'f', value: this.hoverDist },
         hoverSizeInc: { type: 'f', value: this.hoverSizeInc },
-        hoverMaxSizeMultiplier: { type: 'f', value: this.hoverMaxSizeMultiplier }
+        hoverMaxSizeMultiplier: { type: 'f', value: this.hoverMaxSizeMultiplier },
+
+        webcamThreshold: { type: 'f', value: this.webcamThreshold },
+        webcamStarInc: { type: 'f', value: this.webcamStarInc },
+        webcamStarSize: { type: 'f', value: this.webcamStarSize },
+        webcamStarMultiplier: { type: 'f', value: this.webcamStarMultiplier },
+        webcamStarDecSpeed: { type: 'f', value: this.webcamStarDecSpeed }
       },
       simulationVertexShader: sizeSimulationVertexShader,
       simulationFragmentShader: sizeSimulationFragmentShader
@@ -184,12 +207,12 @@ export default class Particles {
     })
 
     this.material = new THREE.ShaderMaterial({
+      blending,
       uniforms,
       vertexShader,
       fragmentShader,
       depthTest,
       depthWrite,
-      opacity: this.opacity,
       transparent
     })
 
@@ -377,8 +400,23 @@ export default class Particles {
   }
 
   updateParticleVars () {
+    if (this.minSize > this.maxSize) {
+      this.minSize = this.maxSize
+    }
+
+    if (this.maxSize < this.minSize) {
+      this.maxSize = this.minSize
+    }
+
     this.sizeFBO.simulationShader.uniforms.hoverDist.value = this.hoverDist
     this.sizeFBO.simulationShader.uniforms.hoverSizeInc.value = this.hoverSizeInc
     this.sizeFBO.simulationShader.uniforms.hoverMaxSizeMultiplier.value = this.hoverMaxSizeMultiplier
+
+    this.webcamDifferenceFBO.simulationShader.uniforms.webcamOutlineStrength.value = this.webcamOutlineStrength
+    this.sizeFBO.simulationShader.uniforms.webcamThreshold.value = this.webcamThreshold
+    this.sizeFBO.simulationShader.uniforms.webcamStarInc.value = this.webcamStarInc
+    this.sizeFBO.simulationShader.uniforms.webcamStarSize.value = this.webcamStarSize
+    this.sizeFBO.simulationShader.uniforms.webcamStarMultiplier.value = this.webcamStarMultiplier
+    this.sizeFBO.simulationShader.uniforms.webcamStarDecSpeed.value = this.webcamStarDecSpeed
   }
 }

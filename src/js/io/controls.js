@@ -1,76 +1,16 @@
 import DatGUI from 'dat-gui'
 
-export default class GUI {
+export default class Controls {
   constructor ({
     particles,
     scene
   } = {}) {
     this.gui = new DatGUI.GUI()
 
-    // this.addBgControls(particles)
-    // this.addTextControls(particles)
-    // this.addMouseControls(particles)
-    // this.addSizeControls(particles)
-    // this.addColourStrengthControls(particles)
-    // this.addOpacityControls(particles)
-  }
-
-  addBgControls (particles) {
-    this.gui
-      .addColor(particles, 'bgColorTop')
-
-    this.gui
-      .addColor(particles, 'bgColorBottom')
-  }
-
-  addTextControls (particles) {
-    this.gui
-      .add(particles, 'font', Object.keys(fonts))
-      .onFinishChange(() => {
-        particles.updateTextTexture()
-      })
-
-    this.gui
-      .add(particles, 'fontSize')
-      .min(10)
-      .max(200)
-      .step(5)
-      .onFinishChange(() => {
-        particles.updateTextTexture()
-      })
-
-    this.gui
-      .add(particles, 'textAlign', ['left', 'center'])
-      .onFinishChange(() => {
-        particles.updateTextTexture()
-      })
-
-    this.gui
-      .add(particles, 'textSizeMultiplier')
-      .min(1)
-      .max(1000)
-      .step(10)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
-
-    this.gui
-      .add(particles, 'topSpeed')
-      .min(0.1)
-      .max(10)
-      .step(0.1)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
-
-    this.gui
-      .add(particles, 'acceleration')
-      .min(0.00001)
-      .max(0.01)
-      .step(0.00001)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
+    this.addSizeControls(particles)
+    this.addWebcamControls(particles)
+    this.addColourStrengthControls(particles)
+    this.addOpacityControls(particles)
   }
 
   addMouseControls (particles) {
@@ -96,7 +36,7 @@ export default class GUI {
       .add(particles, 'hoverMaxSizeMultiplier')
       .min(1)
       .max(3)
-      .step(0.05)
+      .step(0.1)
       .onFinishChange(() => {
         particles.updateParticleVars()
       })
@@ -105,27 +45,19 @@ export default class GUI {
   addSizeControls (particles) {
     this.gui
       .add(particles, 'minSize')
-      .min(0.01)
-      .max(0.04)
-      .step(0.001)
+      .min(0.0001)
+      .max(0.06)
+      .step(0.0001)
       .onFinishChange(() => {
-        if (particles.minSize > particles.maxSize) {
-          particles.minSize = particles.maxSize
-        }
-
         particles.updateSizes()
       })
 
     this.gui
       .add(particles, 'maxSize')
       .min(0.01)
-      .max(0.04)
+      .max(0.1)
       .step(0.001)
       .onFinishChange(() => {
-        if (particles.maxSize < particles.minSize) {
-          particles.maxSize = particles.minSize
-        }
-
         particles.updateSizes()
       })
 
@@ -150,10 +82,66 @@ export default class GUI {
     this.gui
       .add(particles, 'skew')
       .min(1)
-      .max(100)
-      .step(1)
+      .max(1000)
+      .step(10)
       .onFinishChange(() => {
         particles.updateSizes()
+      })
+  }
+
+  addWebcamControls (particles) {
+    this.gui
+      .add(particles, 'webcamOutlineStrength')
+      .min(10)
+      .max(300)
+      .step(1)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'webcamThreshold')
+      .min(0)
+      .max(1)
+      .step(0.05)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'webcamStarInc')
+      .min(0.000001)
+      .max(0.001)
+      .step(0.00001)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'webcamStarSize')
+      .min(0.001)
+      .max(0.05)
+      .step(0.001)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'webcamStarMultiplier')
+      .min(1000)
+      .max(10000)
+      .step(100)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'webcamStarDecSpeed')
+      .min(1)
+      .max(50)
+      .step(0.5)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
       })
   }
 
@@ -172,7 +160,7 @@ export default class GUI {
     this.gui
       .add(particles, 'opacity')
       .min(0.1)
-      .max(1.5)
+      .max(2)
       .step(0.05)
       .onFinishChange(() => {
         particles.updateColours()
