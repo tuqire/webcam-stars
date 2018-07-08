@@ -22,6 +22,7 @@ const sizeSimulationFragmentShader = `
 
 	uniform float sizeInc;
 	uniform float sizeRange;
+	uniform float radius;
 
 	float getSize(bool isWebcamParticle, float webcamParticleVal) {
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
@@ -56,7 +57,7 @@ const sizeSimulationFragmentShader = `
 
 	void main() {
 		vec3 currPosition = texture2D(tPosition, vUv).xyz;
-		float webcamParticleVal = texture2D(tWebcam, vec2((currPosition.x + 3.0) / 5.8, (currPosition.y + 1.5) / 2.8)).r;
+		float webcamParticleVal = texture2D(tWebcam, vec2((currPosition.x + (radius / 2.0)) / radius, (currPosition.y + (radius / 2.0)) / radius)).r;
 		bool isWebcamParticle = webcamParticleVal > 0.5;
 
 		gl_FragColor = vec4(0.0, 0.0, isWebcamParticle ? 1.0: 0.0, getSize(isWebcamParticle, webcamParticleVal));

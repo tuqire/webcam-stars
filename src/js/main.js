@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       opacity: 1
     })
     const camera = new Camera({
+      aspectRatio: 1.0,
       particles,
       position: {
         x: 0,

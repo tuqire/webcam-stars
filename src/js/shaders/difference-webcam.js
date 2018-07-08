@@ -8,22 +8,22 @@ const differenceSimulationFragmentShader = `
 
 	uniform float sizeInc;
   uniform float sizeRange;
-  uniform float tHeight;
-  uniform float tWidth;
+  uniform float webcamWidth;
+  uniform float webcamHeight;
 
 	void main() {
 		vec3 webcamParticle = texture2D(tWebcam, vUv).xyz;
-		vec3 webcamParticleAbove = texture2D(tWebcam, vec2(vUv.x, vUv.y - (1.0 / 300.0))).xyz;
-		vec3 webcamParticleBelow = texture2D(tWebcam, vec2(vUv.x, vUv.y + (1.0 / 300.0))).xyz;
-		vec3 webcamParticleLeft = texture2D(tWebcam, vec2(vUv.x - (1.0 / 150.0), vUv.y)).xyz;
-		vec3 webcamParticleRight = texture2D(tWebcam, vec2(vUv.x + (1.0 / 150.0), vUv.y)).xyz;
+		vec3 webcamParticleAbove = texture2D(tWebcam, vec2(vUv.x, vUv.y - (1.0 / webcamWidth))).xyz;
+		vec3 webcamParticleBelow = texture2D(tWebcam, vec2(vUv.x, vUv.y + (1.0 / webcamWidth))).xyz;
+		vec3 webcamParticleLeft = texture2D(tWebcam, vec2(vUv.x - (1.0 / webcamHeight), vUv.y)).xyz;
+		vec3 webcamParticleRight = texture2D(tWebcam, vec2(vUv.x + (1.0 / webcamHeight), vUv.y)).xyz;
 
     float average = (
-			webcamParticleAbove.x + webcamParticleAbove.y +
-      webcamParticleBelow.x + webcamParticleBelow.y +
-      webcamParticleLeft.x + webcamParticleLeft.y +
-			webcamParticleRight.x + webcamParticleRight.y
-		) / 8.0;
+			webcamParticleAbove.x +
+      webcamParticleBelow.x +
+      webcamParticleLeft.x +
+			webcamParticleRight.x
+		) / 4.0;
 
     webcamParticle.x -= average;
     webcamParticle.y -= average;

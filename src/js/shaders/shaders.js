@@ -26,12 +26,7 @@ const vertexShader = `
 	void main() {
 		vUv = position.xy;
 		vec4 webcamParticle = texture2D(tWebcam, vUv).rgba;
-		vec2 positionZA = texture2D(tPosition, vUv).zw;
-
-		// vec4 position = vec4((vUv.x - 0.5) * 3.0, (vUv.y - 0.5) * 3.0, positionZA.x, positionZA.y);
 		vec4 position = texture2D(tPosition, vUv).xyzw;
-
-		// position saved as rgba / xyzw value in a texture object in memory
 		float size = texture2D(tSize, vUv).w;
 
 		vec4 mvPosition = modelViewMatrix * position;

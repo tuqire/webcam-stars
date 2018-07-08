@@ -57,17 +57,15 @@ export default class Particles {
     this.brightness = brightness
     this.opacity = opacity
 
-    // used to define mouse interaction
-    this.windowHalfX = window.innerWidth / 2
-    this.windowHalfY = window.innerHeight / 2
-
     this.video = document.createElement('video')
+    this.webcamWidth = 1280
+    this.webcamHeight = 720
 
     const noSupport = document.createElement('h1')
     noSupport.innerHTML = 'Your browser is not supported. Please use Google Chrome (v21 or above).'
 
     navigator.getUserMedia
-      ? navigator.getUserMedia({ video: { width: 1280, height: 720 } }, stream => {
+      ? navigator.getUserMedia({ video: { width: this.webcamWidth, height: this.webcamHeight } }, stream => {
         const video = this.video
         video.src = URL.createObjectURL(stream) // eslint-disable-line
         video.width = 480
@@ -139,6 +137,8 @@ export default class Particles {
       tHeight: this.videoImage.height,
       renderer: renderer.get(),
       uniforms: {
+        webcamWidth: { type: 'f', value: this.videoImage.width },
+        webcamHeight: { type: 'f', value: this.videoImage.height },
         tWebcam: { type: 't', value: 0 }
       },
       simulationVertexShader: differenceSimulationVertexShader,
@@ -152,6 +152,11 @@ export default class Particles {
       tHeight,
       renderer: renderer.get(),
       uniforms: {
+        webcamWidth: { type: 'f', value: this.webcamWidth },
+        webcamHeight: { type: 'f', value: this.webcamHeight },
+
+        radius: { type: 'f', value: this.radius },
+
         tPosition: { type: 't', value: 0 },
         tDefaultSize: { type: 't', value: 0 },
         tWebcam: { type: 't', value: 0 },
@@ -240,10 +245,6 @@ export default class Particles {
 
   getPositions () {
     const vertices = new Float32Array(this.numParticles * 4)
-    let lowestX = 0
-    let lowestY = 0
-    let largestX = 0
-    let largestY = 0
 
     for (let i = 0, i3 = 0, i4 = 0; i < this.numParticles; i++, i3 += 3, i4 += 4) {
       const vertice = this.calcPosition()
@@ -252,26 +253,15 @@ export default class Particles {
       this.positions[i3 + 1] = vertices[i4 + 1] = vertice[1]
       this.positions[i3 + 2] = vertices[i4 + 2] = vertice[2]
 
-      lowestX = lowestX > this.positions[i3] ? this.positions[i3] : lowestX
-      lowestY = lowestY > this.positions[i3] ? this.positions[i3] : lowestY
-
-      largestX = largestX < this.positions[i3] ? this.positions[i3] : largestX
-      largestY = largestY < this.positions[i3] ? this.positions[i3] : largestY
-
       vertices[i4 + 3] = 1.0
     }
-
-    this.lowestX = lowestX
-    this.lowestY = lowestY
-    this.largestX = largestX
-    this.largestY = largestY
 
     return vertices
   }
 
   calcPosition () {
-    const x = (Math.random() - 0.5) * (this.windowWidth / 290)
-    const y = (Math.random() - 0.5) * (this.windowHeight / 290)
+    const x = (Math.random() - 0.5) * this.radius
+    const y = (Math.random() - 0.5) * this.radius
     const z = 0
 
     return [x, y, z]
