@@ -44,7 +44,12 @@ export default class Particles {
     webcamStarInc = 0.0001,
     webcamStarSize = 0.3,
     webcamStarMultiplier = 5000,
-    webcamStarDecSpeed = 5
+    webcamStarDecSpeed = 5,
+
+    // used to define raycasting boundries
+    hoverDist = 10,
+    hoverSizeInc = 0.05,
+    hoverMaxSizeMultiplier = 5
   }) {
     this.renderer = renderer
 
@@ -72,6 +77,15 @@ export default class Particles {
     this.webcamStarSize = webcamStarSize
     this.webcamStarMultiplier = webcamStarMultiplier
     this.webcamStarDecSpeed = webcamStarDecSpeed
+
+    // used to define mouse interaction
+    this.windowHalfX = window.innerWidth / 2
+    this.windowHalfY = window.innerHeight / 2
+
+    // used to define mouse interaction animation
+    this.hoverDist = hoverDist
+    this.hoverSizeInc = hoverSizeInc
+    this.hoverMaxSizeMultiplier = hoverMaxSizeMultiplier
 
     this.video = document.createElement('video')
     this.webcamWidth = 1280
@@ -181,15 +195,16 @@ export default class Particles {
         sizeRange: { type: 'f', value: this.sizeRange },
         sizeInc: { type: 'f', value: this.sizeInc },
 
-        hoverDist: { type: 'f', value: this.hoverDist },
-        hoverSizeInc: { type: 'f', value: this.hoverSizeInc },
-        hoverMaxSizeMultiplier: { type: 'f', value: this.hoverMaxSizeMultiplier },
-
         webcamThreshold: { type: 'f', value: this.webcamThreshold },
         webcamStarInc: { type: 'f', value: this.webcamStarInc },
         webcamStarSize: { type: 'f', value: this.webcamStarSize },
         webcamStarMultiplier: { type: 'f', value: this.webcamStarMultiplier },
-        webcamStarDecSpeed: { type: 'f', value: this.webcamStarDecSpeed }
+        webcamStarDecSpeed: { type: 'f', value: this.webcamStarDecSpeed },
+
+        mouse: { value: new THREE.Vector3(10000, 10000, 10000) },
+        hoverDist: { type: 'f', value: this.hoverDist },
+        hoverSizeInc: { type: 'f', value: this.hoverSizeInc },
+        hoverMaxSizeMultiplier: { type: 'f', value: this.hoverMaxSizeMultiplier }
       },
       simulationVertexShader: sizeSimulationVertexShader,
       simulationFragmentShader: sizeSimulationFragmentShader
@@ -231,6 +246,7 @@ export default class Particles {
 
     scene.add(this.get())
 
+    document.addEventListener('mousemove', this.onMouseMove.bind(this), false)
     this.ready = true
   }
 
@@ -258,8 +274,8 @@ export default class Particles {
   }
 
   onMouseMove (event) {
-    const xMultiplier = this.cameraZ / (this.windowHalfY * 2.8)
-    const yMultiplier = this.cameraZ / (this.windowHalfY * 2.65)
+    const xMultiplier = this.cameraZ / (this.windowHalfX * 2.7)
+    const yMultiplier = this.cameraZ / (this.windowHalfY * -2.7)
     const mouseX = event.clientX - this.windowHalfX
     const mouseY = this.windowHalfY - event.clientY
 
@@ -408,15 +424,15 @@ export default class Particles {
       this.maxSize = this.minSize
     }
 
-    this.sizeFBO.simulationShader.uniforms.hoverDist.value = this.hoverDist
-    this.sizeFBO.simulationShader.uniforms.hoverSizeInc.value = this.hoverSizeInc
-    this.sizeFBO.simulationShader.uniforms.hoverMaxSizeMultiplier.value = this.hoverMaxSizeMultiplier
-
     this.webcamDifferenceFBO.simulationShader.uniforms.webcamOutlineStrength.value = this.webcamOutlineStrength
     this.sizeFBO.simulationShader.uniforms.webcamThreshold.value = this.webcamThreshold
     this.sizeFBO.simulationShader.uniforms.webcamStarInc.value = this.webcamStarInc
     this.sizeFBO.simulationShader.uniforms.webcamStarSize.value = this.webcamStarSize
     this.sizeFBO.simulationShader.uniforms.webcamStarMultiplier.value = this.webcamStarMultiplier
     this.sizeFBO.simulationShader.uniforms.webcamStarDecSpeed.value = this.webcamStarDecSpeed
+
+    this.sizeFBO.simulationShader.uniforms.hoverDist.value = this.hoverDist
+    this.sizeFBO.simulationShader.uniforms.hoverSizeInc.value = this.hoverSizeInc
+    this.sizeFBO.simulationShader.uniforms.hoverMaxSizeMultiplier.value = this.hoverMaxSizeMultiplier
   }
 }

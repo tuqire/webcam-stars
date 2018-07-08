@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
       webcamStarInc: 0.0001,
       webcamStarSize: 0.01,
       webcamStarMultiplier: 5000,
-      webcamStarDecSpeed: 5.5
+      webcamStarDecSpeed: 5.5,
+      hoverDist: 0.04,
+      hoverSizeInc: 0.002,
+      hoverMaxSizeMultiplier: 3
     })
     const camera = new Camera({
       aspectRatio: 1.0,

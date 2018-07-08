@@ -7,39 +7,20 @@ export default class Controls {
   } = {}) {
     this.gui = new DatGUI.GUI()
 
+    this.addBgControls(particles)
     this.addSizeControls(particles)
     this.addWebcamControls(particles)
+    this.addMouseControls(particles)
     this.addColourStrengthControls(particles)
     this.addOpacityControls(particles)
   }
 
-  addMouseControls (particles) {
+  addBgControls (particles) {
     this.gui
-      .add(particles, 'hoverDist')
-      .min(0)
-      .max(0.5)
-      .step(0.01)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
+      .addColor(particles, 'bgColorTop')
 
     this.gui
-      .add(particles, 'hoverSizeInc')
-      .min(0)
-      .max(0.03)
-      .step(0.001)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
-
-    this.gui
-      .add(particles, 'hoverMaxSizeMultiplier')
-      .min(1)
-      .max(3)
-      .step(0.1)
-      .onFinishChange(() => {
-        particles.updateParticleVars()
-      })
+      .addColor(particles, 'bgColorBottom')
   }
 
   addSizeControls (particles) {
@@ -135,11 +116,40 @@ export default class Controls {
         particles.updateParticleVars()
       })
 
+    // this.gui
+    //   .add(particles, 'webcamStarDecSpeed')
+    //   .min(1)
+    //   .max(50)
+    //   .step(0.5)
+    //   .onFinishChange(() => {
+    //     particles.updateParticleVars()
+    //   })
+  }
+
+  addMouseControls (particles) {
     this.gui
-      .add(particles, 'webcamStarDecSpeed')
+      .add(particles, 'hoverDist')
+      .min(0)
+      .max(0.5)
+      .step(0.01)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'hoverSizeInc')
+      .min(0)
+      .max(0.03)
+      .step(0.001)
+      .onFinishChange(() => {
+        particles.updateParticleVars()
+      })
+
+    this.gui
+      .add(particles, 'hoverMaxSizeMultiplier')
       .min(1)
-      .max(50)
-      .step(0.5)
+      .max(5)
+      .step(0.2)
       .onFinishChange(() => {
         particles.updateParticleVars()
       })

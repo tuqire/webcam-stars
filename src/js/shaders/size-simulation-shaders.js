@@ -30,11 +30,15 @@ const sizeSimulationFragmentShader = `
 	uniform float sizeRange;
 	uniform float radius;
 
-	float getSize(bool isWebcamParticle, float webcamParticleVal) {
+	uniform vec3 mouse;
+	uniform float hoverDist;
+	uniform float hoverSizeInc;
+	uniform float hoverMaxSizeMultiplier;
+
+	float getSize(bool isWebcamParticle, float webcamParticleVal, vec3 currPosition) {
 		float defaultSize = texture2D(tDefaultSize, vUv).w;
 		float prevSize = texture2D(tPrev, vUv).w;
 		float size = texture2D(tCurr, vUv).w;
-		bool wasWebcamParticle = texture2D(tCurr, vUv).z > webcamThreshold && !isWebcamParticle;
 		float _sizeInc = sizeInc;
 		float _defaultSize = defaultSize;
 
@@ -45,6 +49,7 @@ const sizeSimulationFragmentShader = `
 
 		float minSize = _defaultSize - sizeRange;
 		float maxSize = _defaultSize + sizeRange;
+		bool wasWebcamParticle = maxSize - _sizeInc >= maxSize && !isWebcamParticle;
 
 		if (size == 0.0) {
 			size = _defaultSize;
@@ -53,9 +58,15 @@ const sizeSimulationFragmentShader = `
 		} else if (size < minSize) {
 			size += _sizeInc;
 		} else if (size > maxSize) {
-			size = wasWebcamParticle ? size - (_sizeInc * webcamStarDecSpeed) : size - _sizeInc;
+			size = wasWebcamParticle ? maxSize : size - _sizeInc;
 		} else {
 			size += size - prevSize > 0.0 ? _sizeInc : -_sizeInc;
+		}
+
+		float dist = length(currPosition.xy - mouse.xy);
+
+		if (dist < hoverDist && size < (defaultSize * hoverMaxSizeMultiplier)) {
+			size += hoverSizeInc;
 		}
 
 		return size;
@@ -66,7 +77,7 @@ const sizeSimulationFragmentShader = `
 		float webcamParticleVal = texture2D(tWebcam, vec2((currPosition.x + (radius / 2.0)) / radius, (currPosition.y + (radius / 2.0)) / radius)).r;
 		bool isWebcamParticle = webcamParticleVal > webcamThreshold;
 
-		gl_FragColor = vec4(0.0, 0.0, isWebcamParticle ? 1.0: 0.0, getSize(isWebcamParticle, webcamParticleVal));
+		gl_FragColor = vec4(0.0, 0.0, isWebcamParticle ? 1.0: 0.0, getSize(isWebcamParticle, webcamParticleVal, currPosition));
 	}
 `
 
