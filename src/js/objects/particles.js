@@ -97,7 +97,7 @@ export default class Particles {
     navigator.getUserMedia
       ? navigator.getUserMedia({ video: { width: this.videoWidth, height: this.videoHeight } }, stream => {
         const videoEl = this.videoEl
-        videoEl.srcObject = stream // eslint-disable-line
+        videoEl.srcObject = stream
         videoEl.autoplay = true
 
         this.addStars({
