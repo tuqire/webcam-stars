@@ -87,23 +87,18 @@ export default class Particles {
     this.hoverSizeInc = hoverSizeInc
     this.hoverMaxSizeMultiplier = hoverMaxSizeMultiplier
 
-    this.video = document.createElement('video')
-    this.webcamWidth = 1280
-    this.webcamHeight = 720
+    this.videoEl = document.createElement('video')
+    this.videoWidth = 1280
+    this.videoHeight = 720
 
     const noSupport = document.createElement('h1')
     noSupport.innerHTML = 'Your browser is not supported. Please use Google Chrome (v21 or above).'
 
     navigator.getUserMedia
-      ? navigator.getUserMedia({ video: { width: this.webcamWidth, height: this.webcamHeight } }, stream => {
-        const video = this.video
-        video.srcObject = stream // eslint-disable-line
-        video.width = 480
-        video.height = 480
-        video.autoplay = true
-
-        this.windowHeight = window.innerHeight
-        this.windowWidth = window.innerWidth
+      ? navigator.getUserMedia({ video: { width: this.videoWidth, height: this.videoHeight } }, stream => {
+        const videoEl = this.videoEl
+        videoEl.srcObject = stream // eslint-disable-line
+        videoEl.autoplay = true
 
         this.addStars({
           scene,
@@ -135,40 +130,40 @@ export default class Particles {
     const tWidth = this.tWidth = tHeight
     this.numParticles = tWidth * tHeight
 
-    const videoImage = this.videoImage = document.createElement('canvas')
-    this.videoImageContext = videoImage.getContext('2d')
+    const webcamEl = this.webcamEl = document.createElement('canvas')
+    this.webcamElContext = webcamEl.getContext('2d')
 
-    const videoTexture = this.videoTexture = new THREE.Texture(videoImage)
-    videoTexture.minFilter = videoTexture.magFilter = THREE.NearestFilter
-    videoTexture.needsUpdate = true
+    const webcamTexture = this.webcamTexture = new THREE.Texture(webcamEl)
+    webcamTexture.minFilter = webcamTexture.magFilter = THREE.NearestFilter
+    webcamTexture.needsUpdate = true
 
-    const videoDiffImage = this.videoDiffImage = document.createElement('canvas')
-    this.videoDiffImageContext = videoDiffImage.getContext('2d')
+    const webcamDiffEl = this.webcamDiffEl = document.createElement('canvas')
+    this.webcamDiffElContext = webcamDiffEl.getContext('2d')
 
-    const videoDiffTexture = this.videoDiffTexture = new THREE.Texture(videoDiffImage)
-    videoDiffTexture.minFilter = videoDiffTexture.magFilter = THREE.NearestFilter
-    videoDiffTexture.needsUpdate = true
+    const webcamDiffTexture = this.webcamDiffTexture = new THREE.Texture(webcamDiffEl)
+    webcamDiffTexture.minFilter = webcamDiffTexture.magFilter = THREE.NearestFilter
+    webcamDiffTexture.needsUpdate = true
 
     this.positions = new Float32Array(this.numParticles * 3)
 
     this.blackAndWhiteFBO = new FBO({
-      tWidth: this.videoImage.width,
-      tHeight: this.videoImage.height,
+      tWidth: this.webcamEl.width,
+      tHeight: this.webcamEl.height,
       renderer: renderer.get(),
       uniforms: {
-        tWebcam: { type: 't', value: videoTexture }
+        tWebcam: { type: 't', value: webcamTexture }
       },
       simulationVertexShader: blackAndWhiteSimulationVertexShader,
       simulationFragmentShader: blackAndWhiteSimulationFragmentShader
     })
 
     this.webcamDifferenceFBO = new FBO({
-      tWidth: this.videoImage.width,
-      tHeight: this.videoImage.height,
+      tWidth: this.webcamEl.width,
+      tHeight: this.webcamEl.height,
       renderer: renderer.get(),
       uniforms: {
-        webcamWidth: { type: 'f', value: this.videoImage.width },
-        webcamHeight: { type: 'f', value: this.videoImage.height },
+        webcamWidth: { type: 'f', value: this.webcamEl.width },
+        webcamHeight: { type: 'f', value: this.webcamEl.height },
         tWebcam: { type: 't', value: 0 },
         webcamOutlineStrength: { type: 'f', value: this.webcamOutlineStrength }
       },
@@ -183,9 +178,6 @@ export default class Particles {
       tHeight,
       renderer: renderer.get(),
       uniforms: {
-        webcamWidth: { type: 'f', value: this.webcamWidth },
-        webcamHeight: { type: 'f', value: this.webcamHeight },
-
         radius: { type: 'f', value: this.radius },
 
         tPosition: { type: 't', value: 0 },
@@ -381,10 +373,10 @@ export default class Particles {
 
   update () {
     if (this.ready) {
-      const { video, videoImageContext, videoImage: { width: videoWidth, height: videoHeight }, videoTexture } = this
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        videoImageContext.drawImage(video, 0, 0, videoWidth, videoHeight)
-        videoTexture.needsUpdate = true
+      const { videoEl, webcamElContext, webcamEl: { width: videoWidth, height: videoHeight }, webcamTexture } = this
+      if (videoEl.readyState === videoEl.HAVE_ENOUGH_DATA) {
+        webcamElContext.drawImage(videoEl, 0, 0, videoWidth, videoHeight)
+        webcamTexture.needsUpdate = true
       }
 
       this.blackAndWhiteFBO.simulate()

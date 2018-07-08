@@ -20,6 +20,4 @@ Then visit [http://localhost:8089](http://localhost:8089)
 
 ## TODO
 
-rename webcamHeight and webcamWidth in shader
-consistent naming for video and webcam
 refactor particles class
