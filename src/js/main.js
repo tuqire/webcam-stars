@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const particles = new Particles({
       scene,
       renderer,
-      numParticles: isTabletScreen ? 50000 : 100000,
+      numParticles: isTabletScreen() ? 50000 : 100000,
       radius: 3,
       minSize: 0.013,
       maxSize: 0.04,
