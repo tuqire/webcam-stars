@@ -26,7 +26,7 @@ export default class Controls {
   addSizeControls (particles) {
     this.gui
       .add(particles, 'minSize')
-      .min(0.0001)
+      .min(0)
       .max(0.06)
       .step(0.0001)
       .onFinishChange(() => {
@@ -35,7 +35,7 @@ export default class Controls {
 
     this.gui
       .add(particles, 'maxSize')
-      .min(0.01)
+      .min(0)
       .max(0.1)
       .step(0.001)
       .onFinishChange(() => {
@@ -44,7 +44,7 @@ export default class Controls {
 
     this.gui
       .add(particles, 'sizeInc')
-      .min(0.00001)
+      .min(0)
       .max(0.0002)
       .step(0.00001)
       .onFinishChange(() => {
@@ -61,8 +61,8 @@ export default class Controls {
       })
 
     this.gui
-      .add(particles, 'skew')
-      .min(1)
+      .add(particles, 'sizeSkew')
+      .min(0)
       .max(1000)
       .step(10)
       .onFinishChange(() => {
@@ -73,7 +73,7 @@ export default class Controls {
   addWebcamControls (particles) {
     this.gui
       .add(particles, 'webcamOutlineStrength')
-      .min(10)
+      .min(0)
       .max(300)
       .step(1)
       .onFinishChange(() => {
@@ -84,14 +84,14 @@ export default class Controls {
       .add(particles, 'webcamThreshold')
       .min(0)
       .max(1)
-      .step(0.05)
+      .step(0.02)
       .onFinishChange(() => {
         particles.updateParticleVars()
       })
 
     this.gui
       .add(particles, 'webcamStarInc')
-      .min(0.000001)
+      .min(0)
       .max(0.001)
       .step(0.00001)
       .onFinishChange(() => {
@@ -100,30 +100,21 @@ export default class Controls {
 
     this.gui
       .add(particles, 'webcamStarSize')
-      .min(0.001)
+      .min(0)
       .max(0.05)
-      .step(0.001)
+      .step(0.0005)
       .onFinishChange(() => {
         particles.updateParticleVars()
       })
 
     this.gui
       .add(particles, 'webcamStarMultiplier')
-      .min(1000)
+      .min(0)
       .max(10000)
       .step(100)
       .onFinishChange(() => {
         particles.updateParticleVars()
       })
-
-    // this.gui
-    //   .add(particles, 'webcamStarDecSpeed')
-    //   .min(1)
-    //   .max(50)
-    //   .step(0.5)
-    //   .onFinishChange(() => {
-    //     particles.updateParticleVars()
-    //   })
   }
 
   addMouseControls (particles) {
@@ -147,7 +138,7 @@ export default class Controls {
 
     this.gui
       .add(particles, 'hoverMaxSizeMultiplier')
-      .min(1)
+      .min(0)
       .max(5)
       .step(0.2)
       .onFinishChange(() => {
@@ -158,7 +149,7 @@ export default class Controls {
   addColourStrengthControls (particles) {
     this.gui
       .add(particles, 'brightness')
-      .min(0.1)
+      .min(0)
       .max(3)
       .step(0.05)
       .onFinishChange(() => {
@@ -169,7 +160,7 @@ export default class Controls {
   addOpacityControls (particles) {
     this.gui
       .add(particles, 'opacity')
-      .min(0.1)
+      .min(0)
       .max(2)
       .step(0.05)
       .onFinishChange(() => {
